@@ -41,7 +41,7 @@
 		<?php echo $form->error($model,'status'); ?>
 	</div>
 <?php 
-		$profileFields=Profile::getFields();
+		$profileFields=$profile->getFields();
 		if ($profileFields) {
 			foreach($profileFields as $field) {
 			?>

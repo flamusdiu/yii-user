@@ -1,7 +1,7 @@
-<?php $this->pageTitle=Yii::app()->name . ' - '.UserModule::t("Change password");
+<?php $this->pageTitle=Yii::app()->name . ' - '.UserModule::t("Change Password");
 $this->breadcrumbs=array(
 	UserModule::t("Profile") => array('/user/profile'),
-	UserModule::t("Change password"),
+	UserModule::t("Change Password"),
 );
 $this->menu=array(
 	((UserModule::isAdmin())

@@ -31,7 +31,7 @@ $this->menu=array(
 	<?php echo $form->errorSummary(array($model,$profile)); ?>
 
 <?php 
-		$profileFields=Profile::getFields();
+		$profileFields=$profile->getFields();
 		if ($profileFields) {
 			foreach($profileFields as $field) {
 			?>

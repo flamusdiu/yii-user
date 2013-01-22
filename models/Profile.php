@@ -7,11 +7,11 @@ class Profile extends UActiveRecord
 	 * @var integer $user_id
 	 * @var boolean $regMode
 	 */
-	public static $regMode = false;
+	public $regMode = false;
 	
-	private static $_model;
-	private static $_modelReg;
-	private static $_rules = array();
+	private $_model;
+	private $_modelReg;
+	private $_rules = array();
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -35,14 +35,14 @@ class Profile extends UActiveRecord
 	 */
 	public function rules()
 	{
-		if (!self::$_rules) {
+		if (!$this->_rules) {
 			$required = array();
 			$numerical = array();
 			$float = array();		
 			$decimal = array();
 			$rules = array();
 			
-			$model=self::getFields();
+			$model=$this->getFields();
 			
 			foreach ($model as $field) {
 				$field_rule = array();
@@ -74,11 +74,7 @@ class Profile extends UActiveRecord
 						array_push($rules,$field_rule);
 					}
 				} elseif ($field->field_type=='DATE') {
-                    if ($field->required)
-                        $field_rule = array($field->varname, 'date', 'format' => array('yyyy-mm-dd'));
-                    else
-                        $field_rule = array($field->varname, 'date', 'format' => array('yyyy-mm-dd','0000-00-00'), 'allowEmpty'=>true);
-
+					$field_rule = array($field->varname, 'type', 'type' => 'date', 'dateFormat' => 'yyyy-mm-dd', 'allowEmpty'=>true);
 					if ($field->error_message) $field_rule['message'] = UserModule::t($field->error_message);
 					array_push($rules,$field_rule);
 				}
@@ -98,9 +94,9 @@ class Profile extends UActiveRecord
 			array_push($rules,array(implode(',',$numerical), 'numerical', 'integerOnly'=>true));
 			array_push($rules,array(implode(',',$float), 'type', 'type'=>'float'));
 			array_push($rules,array(implode(',',$decimal), 'match', 'pattern' => '/^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/'));
-			self::$_rules = $rules;
+			$this->_rules = $rules;
 		}
-		return self::$_rules;
+		return $this->_rules;
 	}
 
 	/**
@@ -125,7 +121,7 @@ class Profile extends UActiveRecord
 		$labels = array(
 			'user_id' => UserModule::t('User ID'),
 		);
-		$model=self::getFields();
+		$model=$this->getFields();
 		
 		foreach ($model as $field)
 			$labels[$field->varname] = ((Yii::app()->getModule('user')->fieldsMessage)?UserModule::t($field->title,array(),Yii::app()->getModule('user')->fieldsMessage):UserModule::t($field->title));
@@ -155,7 +151,7 @@ class Profile extends UActiveRecord
 	
 	public function widgetAttributes() {
 		$data = array();
-		$model=self::getFields();
+		$model=$this->getFields();
 		
 		foreach ($model as $field) {
 			if ($field->widget) $data[$field->varname]=$field->widget;
@@ -165,7 +161,7 @@ class Profile extends UActiveRecord
 	
 	public function widgetParams($fieldName) {
 		$data = array();
-		$model=self::getFields();
+		$model=$this->getFields();
 		
 		foreach ($model as $field) {
 			if ($field->widget) $data[$field->varname]=$field->widgetparams;
@@ -173,22 +169,15 @@ class Profile extends UActiveRecord
 		return $data[$fieldName];
 	}
 	
-	public static function getFields() {
-		if (self::$regMode) {
-			if (!self::$_modelReg)
-				self::$_modelReg=ProfileField::model()->forRegistration()->findAll();
-			return self::$_modelReg;
+	public function getFields() {
+		if ($this->regMode) {
+			if (!$this->_modelReg)
+				$this->_modelReg=ProfileField::model()->forRegistration()->findAll();
+			return $this->_modelReg;
 		} else {
-			if (!self::$_model)
-				self::$_model=ProfileField::model()->forOwner()->findAll();
-			return self::$_model;
+			if (!$this->_model)
+				$this->_model=ProfileField::model()->forOwner()->findAll();
+			return $this->_model;
 		}
 	}
-
-    public function afterSave() {
-        if (get_class(Yii::app())=='CWebApplication'&&Profile::$regMode==false) {
-            Yii::app()->user->updateSession();
-        }
-        return parent::afterSave();
-    }
 }

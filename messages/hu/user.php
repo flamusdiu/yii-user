@@ -81,7 +81,7 @@ return array(
 	'Delete file' => 'File törlés',
 	'View User' => 'Felhasználó megtekintése',
 	'Are you sure to delete this item?' => 'Biztosan törölni akarod ezt az elemet?',
-	'Changes is saved.' => 'Változások mentve.',
+	'Changes are saved.' => 'Változások mentve.',
 	'Manage Profile Field' => 'Profil mezők kezelése',
 	'Variable name' => 'Változó neve',
 	'Title' => 'Cím',

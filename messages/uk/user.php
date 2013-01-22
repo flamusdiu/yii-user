@@ -84,7 +84,7 @@ return array(
     'Delete file' => 'Видалити файл',
 	'View User' => 'Перегляд профілю',
 	'Are you sure to delete this item?' => 'Ви дійсно хочете видалити користувача?',
-	'Changes is saved.' => 'Зміни збережено',
+	'Changes are saved.' => 'Зміни збережено',
 	'Manage Profile Field' => 'Налаштування полів',
 	'Variable name' => 'Ім\'я змінної',
 	'Title' => 'Назва',
