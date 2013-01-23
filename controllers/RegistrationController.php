@@ -37,6 +37,7 @@ class RegistrationController extends Controller
 		    	if(isset($_POST['RegistrationForm'])) {
 					$model->attributes=$_POST['RegistrationForm'];
 					$profile->attributes=((isset($_POST['Profile'])?$_POST['Profile']:array()));
+					$savedProfile=Yii::app()->user->getState('profile');
 					if($model->validate()&&$profile->validate())
 					{
 						$soucePassword = $model->password;
@@ -45,9 +46,14 @@ class RegistrationController extends Controller
 						$model->verifyPassword=UserModule::encrypting($model->verifyPassword);
 						$model->superuser=0;
 						$model->status=((Yii::app()->controller->module->activeAfterRegister)?User::STATUS_ACTIVE:User::STATUS_NOACTIVE);
-						
+						$model->email=$savedProfile['email'];
 						if ($model->save()) {
 							$profile->user_id=$model->id;
+							$profile->firstname=$savedProfile['first_name'];
+							$profile->lastname=$savedProfile['last_name'];
+							$profile->profileUrl=$savedProfile['profileUrl'];
+							$profile->image=$savedProfile['image'];
+							Yii::app()->user->unset('profile');
 							$profile->save();
 							if (Yii::app()->controller->module->sendActivationMail) {
 								$activation_url = $this->createAbsoluteUrl('/user/activation/activation',array("activkey" => $model->activkey, "email" => $model->email));

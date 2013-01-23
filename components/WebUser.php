@@ -2,8 +2,7 @@
 
 class WebUser extends CWebUser
 {
-
-    public function getRole()
+	public function getRole()
     {
         return $this->getState('__role');
     }

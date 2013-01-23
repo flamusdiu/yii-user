@@ -11,6 +11,17 @@ class UserIdentity extends CUserIdentity
 	const ERROR_EMAIL_INVALID=3;
 	const ERROR_STATUS_NOTACTIV=4;
 	const ERROR_STATUS_BAN=5;
+	
+	public function __construct($userInfo=array()){
+		if ($userInfo==null) {
+			Yii::app()->redirect(Yii::app()->getModule('user')->loginUrl);
+		} else {
+			Yii::app()->user->setState('profile',$userInfo);
+			$this->username = $userInfo['email'];
+			$this->password = Yii::app()->getModule('user')->encrypting(microtime()); //not used
+		}
+	}
+	
 	/**
 	 * Authenticates a user.
 	 * The example implementation makes sure if the username and password
@@ -27,13 +38,13 @@ class UserIdentity extends CUserIdentity
 			$user=User::model()->notsafe()->findByAttributes(array('username'=>$this->username));
 		}
 		if($user===null)
-			if (strpos($this->username,"@")) {
+			if (strpos($this->username,"@")==false) {
 				$this->errorCode=self::ERROR_EMAIL_INVALID;
 			} else {
 				$this->errorCode=self::ERROR_USERNAME_INVALID;
 			}
-		else if(Yii::app()->getModule('user')->encrypting($this->password)!==$user->password)
-			$this->errorCode=self::ERROR_PASSWORD_INVALID;
+		//else if(Yii::app()->getModule('user')->encrypting($this->password)!==$user->password)
+			//$this->errorCode=self::ERROR_PASSWORD_INVALID;
 		else if($user->status==0&&Yii::app()->getModule('user')->loginNotActiv==false)
 			$this->errorCode=self::ERROR_STATUS_NOTACTIV;
 		else if($user->status==-1)
@@ -43,6 +54,7 @@ class UserIdentity extends CUserIdentity
 			$this->username=$user->username;
 			$this->errorCode=self::ERROR_NONE;
 		}
+
 		return !$this->errorCode;
 	}
     
